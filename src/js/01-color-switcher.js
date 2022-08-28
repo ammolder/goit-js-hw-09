@@ -14,14 +14,17 @@ let startId = null;
 
 refs.start.addEventListener('click', onStartClick);
 refs.stop.addEventListener('click', onEndClick);
+refs.stop.disabled = true;
 
 function onStartClick() {
   startId = setInterval(color, 1000);
-  if (setInterval(color, 1000)) {
+  if (startId) {
     refs.start.disabled = true;
+    refs.stop.disabled = false;
   }
 }
 function onEndClick() {
   clearInterval(startId);
   refs.start.disabled = false;
+  refs.stop.disabled = true;
 }
