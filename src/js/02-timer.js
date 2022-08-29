@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import 'notiflix/build/notiflix-block-aio';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
   data: document.querySelector('#datetime-picker'),
@@ -24,21 +24,33 @@ const options = {
   onClose(selectedDates) {
     selectedDate = selectedDates[0];
     pasteDate();
+    refs.days.textContent = '00';
+    refs.hours.textContent = '00';
+    refs.minutes.textContent = '00';
+    refs.seconds.textContent = '00';
   },
 };
 
 refs.start.addEventListener('click', onButtonStartClick);
 refs.stop.addEventListener('click', onButtonStopClick);
+refs.start.disabled = true;
+refs.stop.disabled = true;
 
 flatpickr(refs.data, options);
 
 function pasteDate() {
   if (selectedDate - startedTime <= 0) {
     refs.start.disabled = true;
-    window.alert('Please choose a date in the future');
+    refs.stop.disabled = true;
+    Notify.failure('Please choose a date in the future');
+    clearInterval(timer.intervalId);
+
+    timer.isActive = false;
   }
   if (selectedDate - startedTime > 0) {
+    Notify.success('Very well');
     refs.start.disabled = false;
+    refs.stop.disabled = true;
   }
 }
 
@@ -47,8 +59,8 @@ function onButtonStartClick() {
 }
 function onButtonStopClick() {
   refs.start.disabled = false;
+  refs.stop.disabled = true;
   clearInterval(timer.intervalId);
-  timer.intervalId = null;
   timer.isActive = false;
 }
 
@@ -65,9 +77,9 @@ const timer = {
       const startTime = Date.now();
       this.isActive = true;
       refs.start.disabled = true;
+      refs.stop.disabled = false;
 
       deltaTime = selectedDate - startTime;
-      console.log('deltaTime :', deltaTime);
 
       const { days, hours, minutes, seconds } = convertMs(deltaTime);
 
