@@ -94,9 +94,9 @@ const timer = {
         refs.minutes.textContent === '00' &&
         refs.seconds.textContent === '00'
       ) {
-        // refs.start.disabled = false;
-        this.isActive = false;
+        refs.stop.disabled = true;
 
+        this.isActive = false;
         clearInterval(this.intervalId);
       }
     }, 1000);
